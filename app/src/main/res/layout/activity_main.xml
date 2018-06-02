@@ -10,25 +10,17 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Conectar"
+        android:text="Bluetooth"
         android:id="@+id/btnConexion"/>
 
-    <Button
-        android:layout_width="match_parent"
+    <ToggleButton
+        android:id="@+id/onOffFlashlight"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Led 1"
-        android:id="@+id/btnLed1"/>
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Led 2"
-        android:id="@+id/btnLed2"/>
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Led 3"
-        android:id="@+id/btnLed3"/>
+        android:layout_gravity="center"
+        android:textOn="Turn Off"
+        android:textOff="Turn On"
+        android:checked="false"
+        android:text="Turn On/Off Camera LED/ Flashlight Android" />
 
 </LinearLayout>

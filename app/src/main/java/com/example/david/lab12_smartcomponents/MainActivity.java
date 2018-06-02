@@ -5,18 +5,21 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
+import android.hardware.Camera;
+import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.Toast;
-
-import java.io.IOException;
-import java.util.UUID;
+import android.widget.ToggleButton;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button btnConexion, btnLed1, btnLed2, btnLed3;
+    Button btnConexion;
+
+    ToggleButton btnEncender;
 
     private static final int SOLICITAR_ACTIVACION = 1;
     private static final int SOLICITAR_CONEXION = 2;
@@ -27,7 +30,13 @@ public class MainActivity extends AppCompatActivity {
 
     boolean conexion = false;
 
+    Camera camera;
+    //android.hardware.Camera.Parameters parameters;
+    boolean isFlashOn;
+
     private static String MAC = null;
+
+    Vibrator vibrator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,9 +44,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         btnConexion = findViewById(R.id.btnConexion);
-        btnLed1 = findViewById(R.id.btnLed1);
-        btnLed2 = findViewById(R.id.btnLed2);
-        btnLed3 = findViewById(R.id.btnLed3);
+        btnEncender = findViewById(R.id.onOffFlashlight);
 
         miBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -52,12 +59,38 @@ public class MainActivity extends AppCompatActivity {
         btnConexion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(conexion) {
+                if (conexion) {
                     // desconectar
                 } else {
                     // conectar
                     Intent abrirLista = new Intent(MainActivity.this, ListaDispositivos.class);
                     startActivityForResult(abrirLista, SOLICITAR_CONEXION);
+                }
+            }
+        });
+
+        btnEncender.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
+                if (checked) {
+
+                    //ToDo something
+                    camera = Camera.open();
+                    Camera.Parameters parameters = camera.getParameters();
+                    parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+                    camera.setParameters(parameters);
+                    camera.startPreview();
+
+                } else {
+
+                    //ToDo something
+                    camera = Camera.open();
+                    Camera.Parameters parameters = camera.getParameters();
+                    parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+                    camera.setParameters(parameters);
+                    camera.stopPreview();
+                    camera.release();
+
                 }
             }
         });
@@ -69,18 +102,18 @@ public class MainActivity extends AppCompatActivity {
 
         switch (requestCode) {
             case SOLICITAR_ACTIVACION:
-                if(resultCode == Activity.RESULT_OK) {
+                if (resultCode == Activity.RESULT_OK) {
                     Toast.makeText(getApplicationContext(), "El bluetooth fue activado",
                             Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(getApplicationContext(), "El bluetooth no fue activado" ,
+                    Toast.makeText(getApplicationContext(), "El bluetooth no fue activado",
                             Toast.LENGTH_LONG).show();
                     //finish();
                 }
                 break;
 
             case SOLICITAR_CONEXION:
-                if(resultCode == Activity.RESULT_OK) {
+                if (resultCode == Activity.RESULT_OK) {
                     MAC = data.getExtras().getString(ListaDispositivos.DIRECCION_MAC);
 
                     //Toast.makeText(getApplicationContext(), "MAC: " + MAC, Toast.LENGTH_LONG).show();
@@ -97,4 +130,20 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
     }
+
+    /*private void setFlashLightOn() {
+        parameters = camera.getParameters();
+        parameters.setFlashMode(android.hardware.Camera.Parameters.FLASH_MODE_TORCH);
+        camera.setParameters(parameters);
+        camera.startPreview();
+        isFlashOn = true;
+    }
+
+    private void setFlashLightOff() {
+        ;
+        parameters.setFlashMode(android.hardware.Camera.Parameters.FLASH_MODE_OFF);
+        camera.setParameters(parameters);
+        camera.stopPreview();
+        isFlashOn = false;
+    }*/
 }
